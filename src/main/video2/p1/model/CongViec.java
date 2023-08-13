@@ -1,6 +1,6 @@
 package main.video2.p1.model;
 
-import main.TrangThai;
+import java.util.Date;
 
 /**
  *
@@ -10,34 +10,26 @@ public class CongViec {
 
     private Long id;
     private String tenCongViec;
-    private TheLoai theLoai;
-    private TrangThai trangThai;
-    private Long thoiGianHoanThanh;
+    private String tenTheLoai;
+    private int trangThai;
+    private Date thoiGianHoanThanh;
 
     public CongViec() {
     }
 
-    public CongViec(Long id, String tenCongViec, TheLoai theLoai, TrangThai trangThai, Long thoiGianHoanThanh) {
+    public CongViec(Long id, String tenCongViec, String tenTheLoai, int trangThai, Date thoiGianHoanThanh) {
         this.id = id;
         this.tenCongViec = tenCongViec;
-        this.theLoai = theLoai;
+        this.tenTheLoai = tenTheLoai;
         this.trangThai = trangThai;
         this.thoiGianHoanThanh = thoiGianHoanThanh;
     }
 
-    public CongViec(String tenCongViec, TheLoai theLoai, TrangThai trangThai, Long thoiGianHoanThanh) {
+    public CongViec(String tenCongViec, String tenTheLoai, int trangThai, Date thoiGianHoanThanh) {
         this.tenCongViec = tenCongViec;
-        this.theLoai = theLoai;
+        this.tenTheLoai = tenTheLoai;
         this.trangThai = trangThai;
         this.thoiGianHoanThanh = thoiGianHoanThanh;
-    }
-
-    public String getTenCongViec() {
-        return tenCongViec;
-    }
-
-    public void setTenCongViec(String tenCongViec) {
-        this.tenCongViec = tenCongViec;
     }
 
     public Long getId() {
@@ -48,33 +40,41 @@ public class CongViec {
         this.id = id;
     }
 
-    public TheLoai getTheLoai() {
-        return theLoai;
+    public String getTenCongViec() {
+        return tenCongViec;
     }
 
-    public void setTheLoai(TheLoai theLoai) {
-        this.theLoai = theLoai;
+    public void setTenCongViec(String tenCongViec) {
+        this.tenCongViec = tenCongViec;
     }
 
-    public TrangThai getTrangThai() {
+    public String getTenTheLoai() {
+        return tenTheLoai;
+    }
+
+    public void setTenTheLoai(String tenTheLoai) {
+        this.tenTheLoai = tenTheLoai;
+    }
+
+    public int getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(TrangThai trangThai) {
+    public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
 
-    public Long getThoiGianHoanThanh() {
+    public Date getThoiGianHoanThanh() {
         return thoiGianHoanThanh;
     }
 
-    public void setThoiGianHoanThanh(Long thoiGianHoanThanh) {
+    public void setThoiGianHoanThanh(Date thoiGianHoanThanh) {
         this.thoiGianHoanThanh = thoiGianHoanThanh;
     }
 
     @Override
     public String toString() {
-        return "CongViec{" + "id=" + id + ", tenCongViec=" + tenCongViec + ", theLoai=" + theLoai + ", trangThai=" + trangThai + ", thoiGianHoanThanh=" + thoiGianHoanThanh + '}';
+        return "CongViec{" + "id=" + id + ", tenCongViec=" + tenCongViec + ", tenTheLoai=" + tenTheLoai + ", trangThai=" + trangThai + ", thoiGianHoanThanh=" + thoiGianHoanThanh + '}';
     }
 
 }

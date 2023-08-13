@@ -4,16 +4,15 @@
  */
 package main.video2.p1.view;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.video2.p1.model.CongViec;
-import main.video2.p1.model.TheLoai;
 import main.video2.p1.service.CongViecService;
-import main.video2.p1.service.TheLoaiService;
-import main.video2.p1.util.Helper;
 
 /**
  *
@@ -25,57 +24,66 @@ public class ViewCongViec extends javax.swing.JFrame {
      * Creates new form ViewCongViec
      */
     private final CongViecService congViecService = new CongViecService();
-    private final TheLoaiService theLoaiService = new TheLoaiService();
     private List<CongViec> listCongViec = new ArrayList<>();
     private DefaultTableModel dtm = new DefaultTableModel();
-    private List<TheLoai> listTheLoai = new ArrayList<>();
     private DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 
     public ViewCongViec() {
         initComponents();
         listCongViec = congViecService.getAll();
-        listTheLoai = theLoaiService.getAll();
         dtm = (DefaultTableModel) tbHienThi.getModel();
-        dcbm = (DefaultComboBoxModel) cbbIDTheLoai.getModel();
         showTable(listCongViec);
-        showCombobox(listTheLoai);
     }
 
     private void showTable(List<CongViec> lists) {
         dtm.setRowCount(0);
         lists.forEach(s -> dtm.addRow(new Object[]{s.getTenCongViec(),
-            s.getTheLoai().getId(), s.getTheLoai().getTenTheLoai(),
-            s.getTrangThai().name(),
-            Helper.formatDate(Helper.convertToDate(s.getThoiGianHoanThanh()))}));
+            s.getTenTheLoai(),
+            getTrangThai(s.getTrangThai()), s.getThoiGianHoanThanh()
+        }));
     }
 
-    private void showCombobox(List<TheLoai> lists) {
-        dcbm.removeAllElements();
-        lists.forEach(s -> dcbm.addElement(s.getTenTheLoai()));
+    private String getTrangThai(int indexTrangThai) {
+        return switch (indexTrangThai) {
+            case 1 ->
+                "Đang thực hiên";
+            case 2 ->
+                "Đã thực hiện";
+            default ->
+                "Chưa thực hiện";
+        };
     }
 
     private CongViec getFormData() {
-        String tenCongViec = txtTenCongViec.getText();
-        String thoiGianHoanThanh = txtThoiGianHoanThanh.getText();
-        int idTheLoai = cbbIDTheLoai.getSelectedIndex();
-        int indexTrangThai = 0;
-        if (rdDangThucHien.isSelected()) {
-            indexTrangThai = 1;
+        try {
+            String tenCongViec = txtTenCongViec.getText();
+            String thoiGianHoanThanh = txtThoiGianHoanThanh.getText();
+            String tenTheoLoai = txtTenTheLoai.getText();
+            String format = "yyyy-MM-dd";
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+            int indexTrangThai = 0;
+            if (rdDangThucHien.isSelected()) {
+                indexTrangThai = 1;
+            }
+            if (rdDaThucHien.isSelected()) {
+                indexTrangThai = 2;
+            }
+            return new CongViec(tenCongViec,
+                    tenTheoLoai,
+                    indexTrangThai, dateFormat.parse(thoiGianHoanThanh));
+        } catch (ParseException ex) {
+            ex.printStackTrace(System.out);
+            return null;
         }
-        if (rdDaThucHien.isSelected()) {
-            indexTrangThai = 2;
-        }
-        return new CongViec(tenCongViec,
-                theLoaiService.getOne(Long.valueOf(idTheLoai)),
-                Helper.getTrangThaiFromViTri(indexTrangThai), Helper.convertToLong(thoiGianHoanThanh));
     }
 
     private void detailCongViec(int index) {
         CongViec cv = listCongViec.get(index);
         txtTenCongViec.setText(cv.getTenCongViec());
-        txtThoiGianHoanThanh.setText(Helper.formatDate(Helper.convertToDate(cv.getThoiGianHoanThanh())));
-        cbbIDTheLoai.setSelectedItem(cv.getTheLoai().getTenTheLoai());
-        switch (cv.getTrangThai().ordinal()) {
+        txtTenTheLoai.setText(cv.getTenTheLoai());
+        txtThoiGianHoanThanh.setText(cv.getThoiGianHoanThanh().toString());
+        switch (cv.getTrangThai()) {
             case 0 -> {
                 buttonGroup1.clearSelection();
                 rdChuaThucHien.setSelected(true);
@@ -105,7 +113,6 @@ public class ViewCongViec extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        cbbIDTheLoai = new javax.swing.JComboBox<>();
         rdChuaThucHien = new javax.swing.JRadioButton();
         rdDangThucHien = new javax.swing.JRadioButton();
         rdDaThucHien = new javax.swing.JRadioButton();
@@ -116,6 +123,7 @@ public class ViewCongViec extends javax.swing.JFrame {
         btnRemove = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbHienThi = new javax.swing.JTable();
+        txtTenTheLoai = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -129,8 +137,6 @@ public class ViewCongViec extends javax.swing.JFrame {
         jLabel4.setText("Thời gian hoàn thành");
 
         jLabel5.setText("Trạng thái");
-
-        cbbIDTheLoai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         buttonGroup1.add(rdChuaThucHien);
         rdChuaThucHien.setSelected(true);
@@ -165,13 +171,13 @@ public class ViewCongViec extends javax.swing.JFrame {
 
         tbHienThi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Tên công việc", "ID Thể loại", "Tên thể loại", "Trạng thái", "Thời gian hoàn thành"
+                "Tên công việc", "Tên thể loại", "Trạng thái", "Thời gian hoàn thành"
             }
         ));
         tbHienThi.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -190,22 +196,26 @@ public class ViewCongViec extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
                             .addComponent(jLabel5)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(32, 32, 32)
                                 .addComponent(txtThoiGianHoanThanh, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3))
                                 .addGap(69, 69, 69)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cbbIDTheLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtTenCongViec, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(rdChuaThucHien)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(rdDangThucHien)))))
+                                        .addComponent(rdDangThucHien))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtTenTheLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtTenCongViec, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
                         .addGap(42, 42, 42)
                         .addComponent(rdDaThucHien)
                         .addGap(50, 50, 50))
@@ -233,11 +243,11 @@ public class ViewCongViec extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(txtTenCongViec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(cbbIDTheLoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
+                    .addComponent(txtTenTheLoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(rdChuaThucHien)
@@ -299,7 +309,6 @@ public class ViewCongViec extends javax.swing.JFrame {
     private javax.swing.JButton btnRemove;
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> cbbIDTheLoai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -311,6 +320,7 @@ public class ViewCongViec extends javax.swing.JFrame {
     private javax.swing.JRadioButton rdDangThucHien;
     private javax.swing.JTable tbHienThi;
     private javax.swing.JTextField txtTenCongViec;
+    private javax.swing.JTextField txtTenTheLoai;
     private javax.swing.JTextField txtThoiGianHoanThanh;
     // End of variables declaration//GEN-END:variables
 }

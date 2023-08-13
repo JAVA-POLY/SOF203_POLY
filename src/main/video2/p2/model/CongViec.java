@@ -1,7 +1,6 @@
 package main.video2.p2.model;
 
-import java.util.List;
-import main.TrangThai;
+import java.util.Date;
 
 /**
  *
@@ -11,24 +10,24 @@ public class CongViec {
 
     private Long id;
     private String tenCongViec;
-    private List<TheLoai> theLoais;
-    private TrangThai trangThai;
-    private Long thoiGianHoanThanh;
+    private TheLoai theLoai;
+    private int trangThai;
+    private Date thoiGianHoanThanh;
 
     public CongViec() {
     }
 
-    public CongViec(Long id, String tenCongViec, List<TheLoai> theLoais, TrangThai trangThai, Long thoiGianHoanThanh) {
+    public CongViec(Long id, String tenCongViec, TheLoai theLoai, int trangThai, Date thoiGianHoanThanh) {
         this.id = id;
         this.tenCongViec = tenCongViec;
-        this.theLoais = theLoais;
+        this.theLoai = theLoai;
         this.trangThai = trangThai;
         this.thoiGianHoanThanh = thoiGianHoanThanh;
     }
 
-    public CongViec(String tenCongViec, List<TheLoai> theLoais, TrangThai trangThai, Long thoiGianHoanThanh) {
+    public CongViec(String tenCongViec, TheLoai theLoai, int trangThai, Date thoiGianHoanThanh) {
         this.tenCongViec = tenCongViec;
-        this.theLoais = theLoais;
+        this.theLoai = theLoai;
         this.trangThai = trangThai;
         this.thoiGianHoanThanh = thoiGianHoanThanh;
     }
@@ -49,33 +48,32 @@ public class CongViec {
         this.tenCongViec = tenCongViec;
     }
 
-    public List<TheLoai> getTheLoais() {
-        return theLoais;
+    public TheLoai getTheLoai() {
+        return theLoai;
     }
 
-    public void setTheLoais(List<TheLoai> theLoais) {
-        this.theLoais = theLoais;
+    public void setTheLoai(TheLoai theLoai) {
+        this.theLoai = theLoai;
     }
 
-    public TrangThai getTrangThai() {
+    public int getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(TrangThai trangThai) {
+    public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
 
-    public Long getThoiGianHoanThanh() {
+    public Date getThoiGianHoanThanh() {
         return thoiGianHoanThanh;
     }
 
-    public void setThoiGianHoanThanh(Long thoiGianHoanThanh) {
+    public void setThoiGianHoanThanh(Date thoiGianHoanThanh) {
         this.thoiGianHoanThanh = thoiGianHoanThanh;
     }
 
     @Override
     public String toString() {
-        return "CongViec{" + "id=" + id + ", tenCongViec=" + tenCongViec + ", theLoais=" + theLoais + ", trangThai=" + trangThai + ", thoiGianHoanThanh=" + thoiGianHoanThanh + '}';
+        return "CongViec{" + "id=" + id + ", tenCongViec=" + tenCongViec + ", theLoai=" + theLoai + ", trangThai=" + trangThai + ", thoiGianHoanThanh=" + thoiGianHoanThanh + '}';
     }
-
 }
